@@ -18,6 +18,13 @@ import br.com.thiagopinho.gestao_vagas.modules.candidate.useCases.CreateCandidat
 import br.com.thiagopinho.gestao_vagas.modules.candidate.useCases.ListAllJobsByFilterUseCase;
 import br.com.thiagopinho.gestao_vagas.modules.candidate.useCases.ProfileCandidateUseCase;
 import br.com.thiagopinho.gestao_vagas.modules.company.Entities.JobEntity;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
@@ -65,6 +72,17 @@ public class CandidateController {
 
     @GetMapping("/job")
     @PreAuthorize("hasRole('CANDIDATE')")
+    @Tag(name = "Candidate", description = "Informations about candidate")
+    @Operation(summary = "List all available jobs to candidate", description = "Function to list all available jobs to candidate by filter")
+    @ApiResponses({
+
+            @ApiResponse(responseCode = "200", description = "List of jobs", content = {
+                    @Content(array = @ArraySchema(schema = @Schema(implementation = JobEntity.class)))
+            }),
+            @ApiResponse(responseCode = "400", description = "Error to list jobs")
+
+    })
+
     public List<JobEntity> findJobByFilter(@RequestParam String filter) {
         return this.allJobsByFilterUseCase.execute(filter);
     }
